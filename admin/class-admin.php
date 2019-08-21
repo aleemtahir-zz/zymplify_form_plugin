@@ -163,6 +163,7 @@ class zwf_Admin {
 
 		                    jQuery(currentElement).fadeOut().hide();
 	                		jQuery("#authenticate-form").fadeOut().hide();
+	                		jQuery("#zwf_admin_error")..fadeOut().hide();
 	                	}
 	                	else
 	                	{	

@@ -77,17 +77,25 @@ class ZWF_Widget extends WP_Widget {
 
 			$post = $_POST['fields'];
 			// print_r($post); die;
-       		$ch = curl_init('https://mpf48x2mxa.execute-api.eu-west-1.amazonaws.com/dev/api/contacts');
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-			curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
-			$response = curl_exec($ch);
-			curl_close($ch);
 
+			// $headers = [
+			//     'Content-Type: application/json'
+			// ];
+
+   //     		$ch = curl_init('https://mpf48x2mxa.execute-api.eu-west-1.amazonaws.com/dev/api/contacts');
+			// curl_setopt($ch, CURLOPT_POST, 1);
+			// curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
+			// curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+			// curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+			// $response = curl_exec($ch);
+			// curl_close($ch);
+
+			// print_r($response); die;
        		?>
-       		<script type="text/javascript">
+       		<!-- <script type="text/javascript">
        			var message 	= "#zwf_submit_msg_"+ "<?php echo $_POST['fields']['campaignId'] ?>";
        			jQuery(message).addClass('text-primary').html("Your form has been submitted successfully.");
-       		</script>
+       		</script> -->
        		<?php
 
         }
