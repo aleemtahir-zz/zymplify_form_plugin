@@ -94,10 +94,10 @@ jQuery(document).ready(function($) {
     });*/
 
 
-    jQuery('.zwf_submit').on('click', function(e){
-    	e.preventDefault();
-    	var id = jQuery(this).data('campaign-id');
-    	// console.log(jQuery(this).data('campaign-id'));
-    	jQuery('#zwf_submit_msg_'+id).html("Your form has been submitted successfully.");
-    });
+    // jQuery('.zwf_submit').on('click', function(e){
+    // 	e.preventDefault();
+    // 	var id = jQuery(this).data('campaign-id');
+    // 	// console.log(jQuery(this).data('campaign-id'));
+    // 	jQuery('#zwf_submit_msg_'+id).html("Your form has been submitted successfully.");
+    // });
 });

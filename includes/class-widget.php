@@ -78,24 +78,33 @@ class ZWF_Widget extends WP_Widget {
 			$post = $_POST['fields'];
 			// print_r($post); die;
 
-			// $headers = [
-			//     'Content-Type: application/json'
-			// ];
+			$url 		= "https://mpf48x2mxa.execute-api.eu-west-1.amazonaws.com/dev/api/contacts";
+			$response 	= wp_remote_post( $url,
+	    						array(
+	    							'headers' => array( 
+	    								'Content-Type' => 'application/x-www-form-urlencoded' 
+	    							),
+	    							'body' => $post 
+	    						));
 
-   //     		$ch = curl_init('https://mpf48x2mxa.execute-api.eu-west-1.amazonaws.com/dev/api/contacts');
-			// curl_setopt($ch, CURLOPT_POST, 1);
-			// curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
-			// curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-			// curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-			// $response = curl_exec($ch);
-			// curl_close($ch);
+			if ( is_array( $response ) ) {
+			  	$header = $response['headers']; // array of http header lines
+			  	$body = $response['body']; // use the content
+		    	$finalized_response = json_decode($body);
+			}
 
-			// print_r($response); die;
+			// print_r($body); die;
        		?>
-       		<!-- <script type="text/javascript">
-       			var message 	= "#zwf_submit_msg_"+ "<?php echo $_POST['fields']['campaignId'] ?>";
-       			jQuery(message).addClass('text-primary').html("Your form has been submitted successfully.");
-       		</script> -->
+       		<script type="text/javascript">
+       			function showSuccessMessage(id)
+			    {
+			    	console.log(jQuery('#zwf_submit_msg_'+id));
+			    	jQuery('#zwf_submit_msg_'+id).addClass('text-primary').html("Your form has been submitted successfully.");
+			    }
+
+       			showSuccessMessage(<?php echo $_POST['fields']['campaignId'] ?>);
+       			// jQuery(message).addClass('text-primary').html("Your form has been submitted successfully.");
+       		</script>
        		<?php
 
         }

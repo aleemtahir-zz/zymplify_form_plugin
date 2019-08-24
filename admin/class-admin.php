@@ -109,37 +109,37 @@ class zwf_Admin {
                 'whatever': 1234
             };
 
-            jQuery('#zwf_campaign_submit').click(function(){
+            // jQuery('#zwf_campaign_submit').click(function(){
 
-                event.preventDefault();
-                var currentElement = this;
-                var isValid = true;
+            //     event.preventDefault();
+            //     var currentElement = this;
+            //     var isValid = true;
 
-                if(
-                	jQuery("#auth-username").val() == ""
-                	||
-                	jQuery("#auth-username").val() == "undefined"
-                	||
-                	jQuery("#auth-username").val() == null
-                  )
-                {
-                	isValid = false;
-                }
+            //     if(
+            //     	jQuery("#auth-username").val() == ""
+            //     	||
+            //     	jQuery("#auth-username").val() == "undefined"
+            //     	||
+            //     	jQuery("#auth-username").val() == null
+            //       )
+            //     {
+            //     	isValid = false;
+            //     }
 
-                if(
-                	jQuery("#auth-password").val() == ""
-                	||
-                	jQuery("#auth-password").val() == "undefined"
-                	||
-                	jQuery("#auth-password").val() == null
-                  )
-                {
-                	isValid = false;
-                }
+            //     if(
+            //     	jQuery("#auth-password").val() == ""
+            //     	||
+            //     	jQuery("#auth-password").val() == "undefined"
+            //     	||
+            //     	jQuery("#auth-password").val() == null
+            //       )
+            //     {
+            //     	isValid = false;
+            //     }
 
-                if (isValid) {
+            //     if (isValid) {
                 	
-                	jQuery(currentElement).text("Authenticating ...");
+            //     	jQuery(currentElement).text("Authenticating ...");
 
 	                $("#loading-image").show();
 	                var xhr = jQuery.post(ajaxurl, data, function(response) {
@@ -157,17 +157,17 @@ class zwf_Admin {
 		                        .append("<tr>"+
 		                            "<td>" + data.reference_id + "</td>"+
 		                            "<td>" + data.title + "</td>"+
-		                            "<td>" + data.type + "</td>"+
+		                            // "<td>" + data.type + "</td>"+
 		                            "</tr>");
 		                    });
 
-		                    jQuery(currentElement).fadeOut().hide();
-	                		jQuery("#authenticate-form").fadeOut().hide();
+		                    // jQuery(currentElement).fadeOut().hide();
+	                		// jQuery("#authenticate-form").fadeOut().hide();
 	                		jQuery("#zwf_admin_error").fadeOut().hide();
 	                	}
 	                	else
 	                	{	
-	                		jQuery(currentElement).text("Submit");
+	                		// jQuery(currentElement).text("Submit");
 	                		jQuery("#zwf_admin_error").show();
 	                	}
 
@@ -184,13 +184,13 @@ class zwf_Admin {
 	                	$("#loading-image").hide();
 					    console.log( "finished" );
 					  });
-                }else{
-                	alert("Fill the requried fields!")
-                	jQuery(currentElement).text("Authenticate");
-                	return false;
-                }
+                // }else{
+                // 	alert("Fill the requried fields!")
+                // 	jQuery(currentElement).text("Authenticate");
+                // 	return false;
+                // }
                 
-            });
+        //     });
         });
         </script> <?php
     }
@@ -206,7 +206,7 @@ class zwf_Admin {
 
         global $wpdb;
 
-        $results = $wpdb->get_results( "SELECT * FROM ".$wpdb->prefix."zymplify_campaigns LIMIT 0,50 ");
+        $results = $wpdb->get_results( "SELECT * FROM ".$wpdb->prefix."zymplify_campaigns  ");
         
         if($wpdb->num_rows > 0){
         	print_r(json_encode($results));
