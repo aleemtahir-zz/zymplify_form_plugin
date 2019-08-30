@@ -40,7 +40,7 @@ class Zymplify_Web_Forms_Deactivator {
 		$wpdb->query($sql);
 
 		delete_option("jal_db_version");
-		delete_option('is_zymplify_user_authenticated');
+		delete_option('is_zwf_user');
 	}
 
 }

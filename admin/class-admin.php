@@ -99,110 +99,161 @@ class zwf_Admin {
 
 	}
 
-	/*On Click Event - authenticate button in admin panel*/
-	public function authenticate_user_ajax() { ?>
+	public function zwf_js() { ?>
         <script type="text/javascript" >
         jQuery(document).ready(function($) {
 
-            var data = {
-                'action': 'my_action',
-                'whatever': 1234
-            };
+            if('<?php echo get_option( "zwf_user_token")?>' != ''){
+            	jQuery('#auth_token').val('<?php echo get_option( "zwf_user_token")?>');
+            	jQuery('#zwf_sync_wrap').show();
+            }
 
-            // jQuery('#zwf_campaign_submit').click(function(){
+            jQuery('#zwf_auth_btn').click(function(){
 
-            //     event.preventDefault();
-            //     var currentElement = this;
-            //     var isValid = true;
+                event.preventDefault();
+                var currentElement = this;
+                var isValid = true;
 
-            //     if(
-            //     	jQuery("#auth-username").val() == ""
-            //     	||
-            //     	jQuery("#auth-username").val() == "undefined"
-            //     	||
-            //     	jQuery("#auth-username").val() == null
-            //       )
-            //     {
-            //     	isValid = false;
-            //     }
+                var token = jQuery('#auth_token').val();
 
-            //     if(
-            //     	jQuery("#auth-password").val() == ""
-            //     	||
-            //     	jQuery("#auth-password").val() == "undefined"
-            //     	||
-            //     	jQuery("#auth-password").val() == null
-            //       )
-            //     {
-            //     	isValid = false;
-            //     }
+	            var data = {
+	                'action': 'check_auth',
+	                'user_token': token,
+	            };
 
-            //     if (isValid) {
-                	
-            //     	jQuery(currentElement).text("Authenticating ...");
+                if(
+                	jQuery("#auth_token").val() == ""
+                	||
+                	jQuery("#auth_token").val() == "undefined"
+                	||
+                	jQuery("#auth_token").val() == null
+                  )
+                {
+                	isValid = false;
+                }
 
-	                $("#loading-image").show();
-	                var xhr = jQuery.post(ajaxurl, data, function(response) {
-	                	// jQuery("#authenticate-form").fadeOut().show();
-	                	
-	                	if(response != "")
-	                	{
+                if(isValid)
+                {
+                	var xhr = jQuery.post(ajaxurl, data, function(response) {
+		            	// jQuery("#authenticate-form").fadeOut().hide();
+		            	console.log(response);
+		            	if(response == "done")
+		            	{
+		            		jQuery('#zwf_sync_wrap').show();
+		            		jQuery('#zwf_admin_success')
+		            		.show()
+		            		.html("<b>*User Token has been saved. Now Sync the Data.</b><br><br>");
+		            	}
+		            	else
+		            	{	
+		            		// jQuery(currentElement).text("Submit");
+		            		// jQuery("#zwf_admin_error").show();
+		            	}
+	            	});
 
-	                		// jQuery(currentElement).val("Authenticated");
-		                	var parsedMeta = JSON.parse(response)
-		                    jQuery.each(parsedMeta, function(i,data) {
-		                    	
-		                        $("#campaing_table").css('visibility','visible');
-		                        $("#campaing_table")
-		                        .append("<tr>"+
-		                            "<td>" + data.reference_id + "</td>"+
-		                            "<td>" + data.title + "</td>"+
-		                            // "<td>" + data.type + "</td>"+
-		                            "</tr>");
-		                    });
-
-		                    // jQuery(currentElement).fadeOut().hide();
-	                		// jQuery("#authenticate-form").fadeOut().hide();
-	                		jQuery("#zwf_admin_error").fadeOut().hide();
-	                	}
-	                	else
-	                	{	
-	                		// jQuery(currentElement).text("Submit");
-	                		jQuery("#zwf_admin_error").show();
-	                	}
-
-
-	                });
-
-	                xhr.done(function() {
-					    console.log("success");
+		            xhr.done(function() {
+					    // console.log("success");
 					  })
-					  .fail(function() {
-					    console.log( "error" );
-					  })
-					  .always(function() {
-	                	$("#loading-image").hide();
-					    console.log( "finished" );
-					  });
-                // }else{
-                // 	alert("Fill the requried fields!")
-                // 	jQuery(currentElement).text("Authenticate");
-                // 	return false;
-                // }
-                
-        //     });
+					.fail(function() {
+						// console.log( "error" );
+					})
+					.always(function() {
+						// $("#loading-image").hide();
+						// console.log( "finished" );
+					});
+                }
+                else
+                {
+                	alert("Fill the requried fields!")
+                	// jQuery(currentElement).text("Authenticate");
+                	return false;
+                }
+            });
+
+            jQuery('#zwf_sync_btn').click(function(){
+
+            	var data = {
+	                'action': 'get_campaigns',
+	                // 'user_token': token,
+	            };
+
+            	$("#loading-image").show();
+				var xhr = jQuery.post(ajaxurl, data, function(response) {
+					// jQuery("#authenticate-form").fadeOut().show();
+					// console.log(response);
+					if(response != "")
+					{
+						// jQuery(currentElement).val("Authenticated");
+				    	var parsedMeta = JSON.parse(response)
+				        jQuery.each(parsedMeta, function(i,data) {
+				        	
+				            $("#campaign_table").css('visibility','visible');
+				            $("#campaign_table")
+				            .append("<tr>"+
+				                "<td>" + data.reference_id + "</td>"+
+				                "<td>" + data.title + "</td>"+
+				                // "<td>" + data.type + "</td>"+
+				                "</tr>");
+				        });
+
+				        // jQuery(currentElement).fadeOut().hide();
+						// jQuery("#authenticate-form").fadeOut().hide();
+						jQuery("#zwf_admin_error").fadeOut().hide();
+					}
+					else
+					{	
+						// jQuery(currentElement).text("Submit");
+						jQuery("#zwf_admin_error").show();
+					}
+				});
+
+				xhr.done(function() {
+					// console.log("success");
+				})
+				.fail(function() {
+					// console.log( "error" );
+				})
+				.always(function() {
+					$("#loading-image").hide();
+					// console.log( "finished" );
+				});
+            });
         });
         </script> <?php
     }
 
-    public function authenticate_user_ajax_response() {
+    public function check_auth() {
 
-    	$is_zymplify_user_authenticated = esc_attr(get_option('is_zymplify_user_authenticated', ''));
+    	$user_token = $_POST['user_token'];
+    	$is_zwf_user = esc_attr(get_option('is_zwf_user', ''));
+		 
+		if ( get_option( 'zwf_user_token' ) !== false ) {
+		    // The option already exists, so update it.
+		    update_option( 'zwf_user_token', $user_token );
+		    echo "done";
+		 
+		} else {
+		    // The option hasn't been created yet, so add it with $autoload set to 'no'.
+		    $deprecated = null;
+		    $autoload = 'no';
+		    // add_option( 'is_zwf_user', '1', $deprecated, $autoload );
+		    add_option( 'zwf_user_token', $user_token, $deprecated, $autoload );
+		    echo "done";
+		}
 
-    	if(!$is_zymplify_user_authenticated){
-	    	$activatorObj = new Zymplify_Web_Forms_Activator;
-	    	$activatorObj->activate();
-    	}
+        wp_die(); 
+    }
+
+    public function get_campaigns() {
+
+    	// $is_zwf_user = esc_attr(get_option('is_zwf_user', ''));
+
+    	// if(!$is_zwf_user){
+	    	// $deactivatorObj = new Zymplify_Web_Forms_Deactivator;
+	    	// $deactivatorObj->deactivate();
+	    	deactivate_zwf();
+	    	activate_zwf();
+    	// }
 
         global $wpdb;
 
@@ -211,19 +262,19 @@ class zwf_Admin {
         if($wpdb->num_rows > 0){
         	print_r(json_encode($results));
 
-        	$option_name = 'is_zymplify_user_authenticated' ;
-			$new_value = '1';
+   			// $option_name = 'is_zwf_user' ;
+			// $new_value = '1';
 			 
-			if ( get_option( $option_name ) !== false ) {
-			    // The option already exists, so update it.
-			    update_option( $option_name, $new_value );
+			// if ( get_option( $option_name ) !== false ) {
+			//     // The option already exists, so update it.
+			//     update_option( $option_name, $new_value );
 			 
-			} else {
-			    // The option hasn't been created yet, so add it with $autoload set to 'no'.
-			    $deprecated = null;
-			    $autoload = 'no';
-			    add_option( $option_name, $new_value, $deprecated, $autoload );
-			}
+			// } else {
+			//     // The option hasn't been created yet, so add it with $autoload set to 'no'.
+			//     $deprecated = null;
+			//     $autoload = 'no';
+			//     add_option( $option_name, $new_value, $deprecated, $autoload );
+			// }
         }
         else
         	echo "";

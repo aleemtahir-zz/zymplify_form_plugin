@@ -50,39 +50,43 @@ background: url('../images/ajax-loader.gif') 50% 50% no-repeat rgb(249,249,249);
     <div id="poststuff">
         <div id="post-body" class="metabox-holder columns-2">
             <div id="post-body-content">
-                
-                <!-- <div id="authenticate-form">
+                <div>
+                      <span id="zwf_admin_success" style="display: none;"></span>
+                </div>
+                <!-- <br> -->
+                <div id="authenticate-form">
 
-                  <div class="row form-group">
-                    <label for="username" class="col-md-2">Username *</label>
-                    <input type="text" name="auth-username" id="auth-username" value="" class="col-md-6" />
-                  </div>
-                  
                   <div class="row">
-                    <label for="password" class="col-md-2">Password *</label>
-                    <input type="password" id="auth-password" name="auth-password" value="" class="col-md-6" />
+                    <label for="auth-token" class="col-md-2">Auth Token</label>
+                    <input type="password" id="auth_token" name="auth_token" value="" class="col-md-6" />
                   </div>
 
-                </div> -->
+                </div>
+                
+                <form method="post">
+                    <br>
+                    <div class="submit-wrap">
+                          <?php 
+                          echo '<button id="zwf_auth_btn" type="button" class="btn btn-primary" style="float: left;">Save</button>'; 
+                          ?>
+                    </div>
 
-                <!-- <form method="post"> -->
-                    <!-- <br> -->
-                    <!-- <div class="submit-wrap"> -->
+                    <div id="zwf_sync_wrap" class="submit-wrap" style="display: none;">
                         <?php 
-                        // echo '<button id="zwf_campaign_submit" type="button" class="btn btn-primary" style="float: left;">Submit</button>'; 
+                        echo '<button id="zwf_sync_btn" type="button" class="btn btn-primary">Sync</button>'; 
                         ?>
-                    <!-- </div> -->
+                    </div>
                     <div>
                       <img id="loading-image" src="<?php echo plugin_dir_url( __FILE__ ) ?>../images/ajax-loader.gif" style="display:none;width: 30px; float: left;"/>
                     </div>
-                    <!-- <br> -->
+                    <br>
                     <br>
                     <div>
-                      <span id="zwf_admin_error" style="display: none;">*Data has not been synced. Please refresh the page.</span>
+                      <span id="zwf_admin_error" style="display: none;">*Data has not been synced. Please try again.</span>
                     </div>
-                <!-- </form> -->
+                </form>
 
-                <table id="campaing_table" width='100%' border='0' style="visibility: hidden;">
+                <table id="campaign_table" width='100%' border='0' style="visibility: hidden;">
                   <tbody>
                     <tr>
                         <th>Campaign Id</th>

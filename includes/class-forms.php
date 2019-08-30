@@ -166,8 +166,9 @@ class ZWF_Forms {
 		// Add Setting Attributes
 		$this->loader->add_action('admin_init', $plugin_admin, 'settings_init');
 
-        $this->loader->add_action( 'admin_footer', $plugin_admin, 'authenticate_user_ajax' );
-        $this->loader->add_action( 'wp_ajax_my_action', $plugin_admin, 'authenticate_user_ajax_response' );
+        $this->loader->add_action( 'admin_footer', $plugin_admin, 'zwf_js' );
+        $this->loader->add_action( 'wp_ajax_check_auth', $plugin_admin, 'check_auth' );
+        $this->loader->add_action( 'wp_ajax_get_campaigns', $plugin_admin, 'get_campaigns' );
 
 	}
 

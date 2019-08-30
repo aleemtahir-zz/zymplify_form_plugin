@@ -75,14 +75,14 @@ class ZWF_Widget extends WP_Widget {
 		//Form Processing Logic here  
         if (isset($_POST['fields'])){
 
-			$post = $_POST['fields'];
+			$post = json_encode($_POST['fields']);
 			// print_r($post); die;
 
 			$url 		= "https://mpf48x2mxa.execute-api.eu-west-1.amazonaws.com/dev/api/contacts";
 			$response 	= wp_remote_post( $url,
 	    						array(
 	    							'headers' => array( 
-	    								'Content-Type' => 'application/x-www-form-urlencoded' 
+	    								'Content-Type' => 'application/json' 
 	    							),
 	    							'body' => $post 
 	    						));
@@ -98,7 +98,7 @@ class ZWF_Widget extends WP_Widget {
        		<script type="text/javascript">
        			function showSuccessMessage(id)
 			    {
-			    	console.log(jQuery('#zwf_submit_msg_'+id));
+			    	// console.log(jQuery('#zwf_submit_msg_'+id));
 			    	jQuery('#zwf_submit_msg_'+id).addClass('text-primary').html("Your form has been submitted successfully.");
 			    }
 
