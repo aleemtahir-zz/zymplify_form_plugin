@@ -169,6 +169,7 @@ class ZWF_Forms {
         $this->loader->add_action( 'admin_footer', $plugin_admin, 'zwf_js' );
         $this->loader->add_action( 'wp_ajax_check_auth', $plugin_admin, 'check_auth' );
         $this->loader->add_action( 'wp_ajax_get_campaigns', $plugin_admin, 'get_campaigns' );
+        $this->loader->add_action( 'wp_ajax_get_old_campaigns', $plugin_admin, 'get_old_campaigns' );
 
 	}
 

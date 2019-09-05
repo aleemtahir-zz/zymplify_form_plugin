@@ -41,6 +41,21 @@ class Zymplify_Web_Forms_Deactivator {
 
 		delete_option("jal_db_version");
 		delete_option('is_zwf_user');
+		delete_option('zwf_user_token');
+	}
+
+	public static function remove_data() {
+		global $wpdb;
+
+		$table_name1 = $wpdb->prefix . 'zymplify_campaigns';
+		$table_name2 = $wpdb->prefix . 'zymplify_campaigns_form_fields';
+		$table_name3 = $wpdb->prefix . 'zymplify_campaigns_form_field_values';
+
+		$sql = "DROP TABLE IF EXISTS $table_name1, $table_name2, $table_name3";
+		$wpdb->query($sql);
+
+		delete_option("jal_db_version");
+		delete_option('is_zwf_user');
 	}
 
 }

@@ -106,6 +106,38 @@ class zwf_Admin {
             if('<?php echo get_option( "zwf_user_token")?>' != ''){
             	jQuery('#auth_token').val('<?php echo get_option( "zwf_user_token")?>');
             	jQuery('#zwf_sync_wrap').show();
+
+            	var data = {
+	                'action': 'get_old_campaigns',
+	            };
+
+            	$("#loading-image").show();
+				var xhr = jQuery.post(ajaxurl, data, function(response) {
+					if(response != "")
+					{
+						jQuery('#campaign_table .tbl_data').remove();
+				    	var parsedMeta = JSON.parse(response)
+				        jQuery.each(parsedMeta, function(i,data) {
+				        	
+				            $("#campaign_table").css('visibility','visible');
+				            $("#campaign_table")
+				            .append("<tr class='tbl_data'>"+
+				                "<td>" + data.reference_id + "</td>"+
+				                "<td>" + data.title + "</td>"+
+				                "</tr>");
+				        });
+
+						jQuery("#zwf_admin_error").fadeOut().hide();
+					}
+					else
+					{	
+						jQuery("#zwf_admin_error").text('*No Data Found!').show();
+					}
+				});
+
+				xhr.always(function() {
+					$("#loading-image").hide();
+				});
             }
 
             jQuery('#zwf_auth_btn').click(function(){
@@ -184,12 +216,13 @@ class zwf_Admin {
 					if(response != "")
 					{
 						// jQuery(currentElement).val("Authenticated");
+						jQuery('#campaign_table .tbl_data').remove();
 				    	var parsedMeta = JSON.parse(response)
 				        jQuery.each(parsedMeta, function(i,data) {
 				        	
 				            $("#campaign_table").css('visibility','visible');
 				            $("#campaign_table")
-				            .append("<tr>"+
+				            .append("<tr class='tbl_data'>"+
 				                "<td>" + data.reference_id + "</td>"+
 				                "<td>" + data.title + "</td>"+
 				                // "<td>" + data.type + "</td>"+
@@ -203,7 +236,7 @@ class zwf_Admin {
 					else
 					{	
 						// jQuery(currentElement).text("Submit");
-						jQuery("#zwf_admin_error").show();
+						jQuery("#zwf_admin_error").text('*Data has not been synced. Please try again.').show();
 					}
 				});
 
@@ -247,11 +280,10 @@ class zwf_Admin {
     public function get_campaigns() {
 
     	// $is_zwf_user = esc_attr(get_option('is_zwf_user', ''));
-
+    	// ini_set('display_errors',1);
     	// if(!$is_zwf_user){
-	    	// $deactivatorObj = new Zymplify_Web_Forms_Deactivator;
-	    	// $deactivatorObj->deactivate();
-	    	deactivate_zwf();
+	    	$deactivatorObj = new Zymplify_Web_Forms_Deactivator;
+	    	$deactivatorObj->remove_data();
 	    	activate_zwf();
     	// }
 
@@ -278,6 +310,21 @@ class zwf_Admin {
         }
         else
         	echo "";
+        wp_die(); 
+    }
+
+    public function get_old_campaigns() {
+
+        global $wpdb;
+
+        $results = $wpdb->get_results( "SELECT * FROM ".$wpdb->prefix."zymplify_campaigns  ");
+        
+        if($wpdb->num_rows > 0){
+        	print_r(json_encode($results));
+        }
+        else
+        	echo "";
+
         wp_die(); 
     }
 

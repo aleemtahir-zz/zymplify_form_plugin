@@ -50,6 +50,7 @@ function activate_zwf() {
  * The code that runs during plugin deactivation.
  * This action is documented in includes/class-zymplify-web-form-deactivator.php
  */
+	require_once plugin_dir_path( __FILE__ ) . 'includes/class-deactivator.php';
 function deactivate_zwf() {
 	require_once plugin_dir_path( __FILE__ ) . 'includes/class-deactivator.php';
 	Zymplify_Web_Forms_Deactivator::deactivate();

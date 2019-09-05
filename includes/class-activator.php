@@ -136,7 +136,7 @@ class Zymplify_Web_Forms_Activator {
 
 	public function get_campaigns() {
 
-	    $url = 'https://mpf48x2mxa.execute-api.eu-west-1.amazonaws.com/dev/api/campaigns/forms';  
+	    $url = 'http://mpf48x2mxa.execute-api.eu-west-1.amazonaws.com/dev/api/campaigns/forms';  
 	    
 	    $response 			= wp_remote_get( $url,
 	    						array(
