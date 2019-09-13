@@ -175,6 +175,8 @@ class zwf_Admin {
 		            		jQuery('#zwf_admin_success')
 		            		.show()
 		            		.html("<b>*User Token has been saved. Now Sync the Data.</b><br><br>");
+		            		jQuery("#zwf_admin_error").hide();
+		            		jQuery("#campaign_table").css("visibility","hidden");
 		            	}
 		            	else
 		            	{	
@@ -235,7 +237,7 @@ class zwf_Admin {
 					}
 					else
 					{	
-						// jQuery(currentElement).text("Submit");
+						jQuery('#campaign_table').css("visibility","hidden");
 						jQuery("#zwf_admin_error").text('*Data has not been synced. Please try again.').show();
 					}
 				});

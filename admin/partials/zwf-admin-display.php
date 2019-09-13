@@ -42,6 +42,13 @@ background: url('../images/ajax-loader.gif') 50% 50% no-repeat rgb(249,249,249);
 /*text-indent:-9999px;*/
 
 }
+#auth_token{
+  width: 350px;
+  height: 100px;
+}
+#zwf_auth_btn{
+  margin-right: 10px;
+}
 </style>
 
 <div class="wrap">
@@ -57,8 +64,9 @@ background: url('../images/ajax-loader.gif') 50% 50% no-repeat rgb(249,249,249);
                 <div id="authenticate-form">
 
                   <div class="row">
-                    <label for="auth-token" class="col-md-2">Auth Token</label>
-                    <input type="password" id="auth_token" name="auth_token" value="" class="col-md-6" />
+                    <label for="auth-token" class="col-md-2">Auth Token</label><br>
+                    <textarea id="auth_token" name="auth_token" value="" class="col-md-6">
+                    </textarea>
                   </div>
 
                 </div>

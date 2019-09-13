@@ -140,7 +140,7 @@ class Zymplify_Web_Forms_Activator {
 	    
 	    $response 			= wp_remote_get( $url,
 	    						array(
-	    							'headers' => array( 'Authorization' => 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbGllbnRJZCI6IjEyIiwiZXhwIjoxODc5NzU4MTUzLCJpYXQiOjE1NjQzOTgxNTN9.MRGffSKKiUSJGsOFiKNZSaaAhGxzEeg4ZZXTnBa0VgI' ) 
+	    							'headers' => array( 'Authorization' => 'Bearer '.get_option( "zwf_user_token") ) 
 	    						));
 	    $finalized_response = array();
 
