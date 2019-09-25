@@ -144,8 +144,9 @@ class zwf_Public {
 	        'campaign'  => null
 	    ), $atts );
 	    
+	    ob_start();
         require_once plugin_dir_path(dirname(__FILE__)).'public/partials/zymplify-web-forms-public-display.php';
-        return ob_get_clean();
+        return ob_get_contents();
     }
 
 }
