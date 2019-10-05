@@ -128,170 +128,187 @@ class ZWF_Widget extends WP_Widget {
 		$this->show_form($results, $select);
 	}
 
-	public function show_form($results, $campaign_id){
+	public function show_form($results, $campaign_id, $is_shortcode=0){
+		$content = '';
 		// WordPress core before_widget hook (always include )
-		echo $before_widget;
+		$content .= $before_widget;
 		// Display the widget
-		echo '<div class="widget-text wp_widget_plugin_box">';
+		$content .= '<div class="widget-text wp_widget_plugin_box">';
 			// Display widget title if defined
 			if ( $title ) {
-				echo $before_title . $title . $after_title;
+				$content .= $before_title . $title . $after_title;
 			}
 			// Display text field
 			if ( $text ) {
-				echo '<p>' . $text . '</p>';
+				$content .= '<p>' . $text . '</p>';
 			}
 			// Display select field
 			if ( $results ) {
-				echo '<form method="post" action="" class="zwf_form" id="form_'.$campaign_id.'" >';
+				$content .= '<form method="post" action="" class="zwf_form" id="form_'.$campaign_id.'" >';
 				foreach ($results as $key => $value) {
+					$required = '';
+					if(strpos($value->field_label, '*') !== false)
+						$required = 'required';
+
 					if($value->field_type == 1){
-						echo '<p>'.
+						$content .= '<p>'.
 						'<div class="form-group" >'.
-						'<label for="'.$value->field_name.'">'.$value->field_label.'*</label>'.
-						'<input class="form-control widefat" id="'.$value->field_id.'" name="fields['.$value->field_name.']" type="text" value="'.$value->field_value.'" required/>'.
+						'<label for="'.$value->field_name.'">'.$value->field_label.'</label>'.
+						'<input class="form-control widefat" id="'.$value->field_id.'" name="fields['.$value->field_name.']" type="text" value="'.$value->field_value.'"'.$required.'/>'.
 						'</div>'.
 					  	'</p>';
 					}
 					elseif($value->field_type == 2){
-						echo '<p>'.
+						$content .= '<p>'.
 						'<div class="form-group">'.
 						'<label for="'.$value->field_name.'">'.$value->field_label.'</label>'.
-						'<textarea  class="form-control widefat" id="'.$value->field_id.'" name="fields['.$value->field_name.']" type="text">'.$value->field_value.'</textarea '.
+						'<textarea  class="form-control widefat" 
+							id="'.$value->field_id.'" 
+							name="fields['.$value->field_name.']" type="text" '.$required.'> '.$value->field_value.'</textarea '.
 						'</div>'.
 					  	'</p>';
 					}
 					elseif($value->field_type == 3){
 						
-						echo '<p>'.
+						$content .= '<p>'.
 						'<div class="form-group">'.
 						'<label for="'.$value->field_id.'">'.$value->field_label.'</label>';
 						
 						$values = explode(',', $value->field_value);
 						foreach ($values as $v) {
 							
-							echo '<input class="form-control widefat" id="'.$value->field_id.'" name="fields['.$value->field_name.']" type="checkbox" value="'.$v.'"  />'.$v;
-							echo '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+							$content .= '<input class="form-control widefat" id="'.$value->field_id.'" name="fields['.$value->field_name.']" type="checkbox" value="'.$v.'" '.$required.' />'.$v;
+							$content .= '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 						}
-					  	echo '</div>';
-					  	echo '</p>';
+					  	$content .= '</div>';
+					  	$content .= '</p>';
 					}
 					elseif($value->field_type == 4){
 						
-						echo '<p>'.
+						$content .= '<p>'.
 						'<div class="form-group">'.
 						'<label for="'.$value->field_id.'">'.$value->field_label.'</label>';
 						
 						$values = explode(',', $value->field_value);
 						foreach ($values as $v) {
 							
-							echo '<input class="form-control widefat" id="'.$value->field_id.'" name="fields['.$value->field_name.']" type="radio" value="'.$v.'"  />'.$v;
-							echo '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+							$content .= '<input class="form-control widefat" id="'.$value->field_id.'" name="fields['.$value->field_name.']" type="radio" value="'.$v.'" '.$required.' />'.$v;
+							$content .= '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 						}
-						echo '</div>';
-					  	echo '</p>';
+						$content .= '</div>';
+					  	$content .= '</p>';
 					}
 					elseif($value->field_type == 5){
 						
-						echo '<p>'.
+						$content .= '<p>'.
 						'<div class="form-group">'.
 						'<label for="'.$value->field_id.'">'.$value->field_label.'</label>'.
-						'<select name="fields['.$value->field_name.']" id="'.$value->field_id.'" class="form-control widefat">';
+						'<select name="fields['.$value->field_name.']" id="'.$value->field_id.'" class="form-control widefat" '.$required.'>';
 						
 						$values = explode(',', $value->field_value);
 
 						foreach ($values as $v) {
 							
-							echo '<option value="'.$v.'" >'. $v . '</option>';
+							$content .= '<option value="'.$v.'" >'. $v . '</option>';
 						}
-					  	echo '</select>';
-					  	echo '</div>';
-					  	echo '</p>';
+					  	$content .= '</select>';
+					  	$content .= '</div>';
+					  	$content .= '</p>';
 					}
 					elseif($value->field_type == 6){
 						
-						echo '<p>'.
+						$content .= '<p>'.
 						'<div class="form-group">'.
 						'<label for="'.$value->field_id.'">'.$value->field_label.'</label>'.
-						'<input name="fields['.$value->field_name.']" id="'.$value->field_id.'" class="form-control widefat" type="checkbox" data-toggle="toggle">';
-					  	echo '</div>';
-					  	echo '</p>';
+						'<input name="fields['.$value->field_name.']" id="'.$value->field_id.'" class="form-control widefat" type="checkbox" data-toggle="toggle" '.$required.'>';
+					  	$content .= '</div>';
+					  	$content .= '</p>';
 					}
 					elseif($value->field_type == 7){
 						
-						echo '<p>'.
+						$content .= '<p>'.
 						'<div class="form-group">'.
 						'<label for="'.$value->field_id.'">'.$value->field_label.'</label>'.
-						'<input name="fields['.$value->field_name.']" id="'.$value->field_id.'" class="form-control widefat" type="file">';
-					  	echo '</div>';
-					  	echo '</p>';
+						'<input name="fields['.$value->field_name.']" id="'.$value->field_id.'" class="form-control widefat" type="file" '.$required.'>';
+					  	$content .= '</div>';
+					  	$content .= '</p>';
 					}
 					elseif($value->field_type == 8){
 						
-						echo '<p>'.
+						$content .= '<p>'.
 						'<div class="form-group">'.
 						'<label for="'.$value->field_id.'">'.$value->field_label.'</label>'.
-						'<input name="fields['.$value->field_name.']" id="'.$value->field_id.'" class="form-control widefat" type="number">';
-					  	echo '</div>';
-					  	echo '</p>';
+						'<input name="fields['.$value->field_name.']" id="'.$value->field_id.'" class="form-control widefat" type="number" '.$required.'>';
+					  	$content .= '</div>';
+					  	$content .= '</p>';
 					}
 					elseif($value->field_type == 9){
 						
-						echo '<p>'.
+						$content .= '<p>'.
 						'<div class="form-group">'.
 						'<label for="'.$value->field_id.'">'.$value->field_label.'</label>'.
-						'<input name="fields['.$value->field_name.']" id="'.$value->field_id.'" class="form-control widefat" type="datetime-local">';
-					  	echo '</div>';
-					  	echo '</p>';
+						'<input name="fields['.$value->field_name.']" id="'.$value->field_id.'" class="form-control widefat" type="datetime-local" '.$required.'>';
+					  	$content .= '</div>';
+					  	$content .= '</p>';
 					}
 					elseif($value->field_type == 10){
 						
-						echo '<p>'.
+						$content .= '<p>'.
 						'<div class="form-group">'.
 						'<label for="'.$value->field_id.'">'.$value->field_label.'</label>'.
-						'<input name="fields['.$value->field_name.']" id="'.$value->field_id.'" class="form-control widefat" type="tel" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}">';
-					  	echo '</div>';
-					  	echo '</p>';
+						'<input name="fields['.$value->field_name.']" id="'.$value->field_id.'" class="form-control widefat" type="tel" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" '.$required.'>';
+					  	$content .= '</div>';
+					  	$content .= '</p>';
 					}
 					elseif($value->field_type == 11){
 						
-						echo '<p>'.
+						$content .= '<p>'.
 						'<div class="form-group">'.
 						'<label for="'.$value->field_id.'">'.$value->field_label.'</label>'.
-						'<input name="fields['.$value->field_name.']" id="'.$value->field_id.'" class="form-control widefat" type="date">';
-					  	echo '</div>';
-					  	echo '</p>';
+						'<input name="fields['.$value->field_name.']" id="'.$value->field_id.'" class="form-control widefat" type="date" '.$required.'>';
+					  	$content .= '</div>';
+					  	$content .= '</p>';
 					}
 					elseif($value->field_type == 12){
 						
-						echo '<p>'.
+						$content .= '<p>'.
 						'<div class="form-group">'.
 						'<label for="'.$value->field_id.'">'.$value->field_label.'</label>'.
-						'<input name="fields['.$value->field_name.']" id="'.$value->field_id.'" class="form-control widefat" type="email">';
-					  	echo '</div>';
-					  	echo '</p>';
+						'<input name="fields['.$value->field_name.']" id="'.$value->field_id.'" class="form-control widefat" type="email" '.$required.'>';
+					  	$content .= '</div>';
+					  	$content .= '</p>';
 					}
 					elseif($value->field_type == 13){
 						
-						echo '<p>'.
+						$content .= '<p>'.
 						'<div class="form-group">'.
 						'<label for="'.$value->field_id.'">'.$value->field_label.'</label>'.
-						'<input name="fields['.$value->field_name.']" id="'.$value->field_id.'" class="form-control widefat" type="url">';
-					  	echo '</div>';
-					  	echo '</p>';
+						'<input name="fields['.$value->field_name.']" id="'.$value->field_id.'" class="form-control widefat" type="url" '.$required.'>';
+					  	$content .= '</div>';
+					  	$content .= '</p>';
 					}
 				}
 
-				echo '<input type="hidden" name="fields[campaignId]" value="'.$campaign_id.'">';
-				echo '<input type="hidden" name="fields[channel]" value="155471">';
-				echo '<input type="hidden" name="fields[client]" value="12">';
-				echo '<button class="zwf_submit" data-campaign-id="'.$campaign_id.'" type="submit" class="btn btn-primary" name="send">Submit</button>';
-				echo '<br><br><p id="zwf_submit_msg_'.$campaign_id.'"></p><br><br>';
-				echo '</form>';
+				$content .= '<input type="hidden" name="fields[campaignId]" value="'.$campaign_id.'">';
+				$content .= '<input type="hidden" name="fields[channel]" value="155471">';
+				$content .= '<input type="hidden" name="fields[client]" value="12">';
+				$content .= '<button class="zwf_submit" data-campaign-id="'.$campaign_id.'" type="submit" class="btn btn-primary" name="send">Submit</button>';
+				$content .= '<br><br><p id="zwf_submit_msg_'.$campaign_id.'"></p><br><br>';
+				$content .= '</form>';
 			}
-		echo '</div>';
+		$content .= '</div>';
 		// WordPress core after_widget hook (always include )
-		echo $after_widget;
+		$content .= $after_widget;
+
+		if($is_shortcode)
+		{
+			ob_start();
+			echo $content;
+			$output = ob_get_clean();
+			return $output;
+		}
+		else
+			echo $content;
 	}
 }
 
