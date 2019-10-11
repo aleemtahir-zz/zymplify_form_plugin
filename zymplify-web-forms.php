@@ -46,6 +46,9 @@ function activate_zwf() {
 	require_once plugin_dir_path( __FILE__ ) . 'includes/class-restapi.php';
 	Zymplify_Web_Forms_Activator::activate();
 	Zymplify_Web_Forms_RestApi::activate();
+
+	// run script after activation
+	wp_enqueue_script( 'bts', plugin_dir_url( __FILE__ ) . 'admin/js/bts.js', array(), false, false );
 }
 
 /**

@@ -61,6 +61,7 @@ class Zymplify_Web_Forms_Activator {
 			campaign_id int(9) NOT NULL,
 			name varchar(55) NOT NULL,
 			label varchar(55) NOT NULL,
+			required smallint(1) NOT NULL,
 			type int(9) NOT NULL,
 			PRIMARY KEY  (id)
 		) $charset_collate;";
@@ -183,6 +184,7 @@ class Zymplify_Web_Forms_Activator {
 		    		$field_data[$j]['name'] 		= $field->fieldName;  
 		    		$field_data[$j]['label'] 		= $field->fieldLabel;  
 		    		$field_data[$j]['type'] 		= $field->fieldType;  
+		    		$field_data[$j]['required'] 	= $field->required;  
 		    		$field_data[$j]['campaign_id'] 	= $campaign->id;
 
 		    		$j++;
