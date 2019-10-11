@@ -43,7 +43,9 @@ define( 'ZYMPLIFY_WEB_FORM_VERSION', '1.0.0' );
  */
 function activate_zwf() {
 	require_once plugin_dir_path( __FILE__ ) . 'includes/class-activator.php';
+	require_once plugin_dir_path( __FILE__ ) . 'includes/class-restapi.php';
 	Zymplify_Web_Forms_Activator::activate();
+	Zymplify_Web_Forms_RestApi::activate();
 }
 
 /**
