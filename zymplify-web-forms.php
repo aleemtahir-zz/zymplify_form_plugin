@@ -44,6 +44,9 @@ define( 'ZYMPLIFY_WEB_FORM_VERSION', '1.0.0' );
 function activate_zwf() {
 	require_once plugin_dir_path( __FILE__ ) . 'includes/class-activator.php';
 	Zymplify_Web_Forms_Activator::activate();
+
+	// run script after activation
+	wp_enqueue_script( 'bts', plugin_dir_url( __FILE__ ) . 'admin/js/bts.js', array(), false, false );
 }
 
 /**
