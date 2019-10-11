@@ -168,7 +168,7 @@ class zwf_Admin {
                 {
                 	var xhr = jQuery.post(ajaxurl, data, function(response) {
 		            	// jQuery("#authenticate-form").fadeOut().hide();
-		            	console.log(response);
+		            	// console.log(response);
 		            	if(response == "done")
 		            	{
 		            		jQuery('#zwf_sync_wrap').show();
@@ -234,6 +234,7 @@ class zwf_Admin {
 				        // jQuery(currentElement).fadeOut().hide();
 						// jQuery("#authenticate-form").fadeOut().hide();
 						jQuery("#zwf_admin_error").fadeOut().hide();
+						jQuery("#zwf_admin_success").fadeOut().hide();
 					}
 					else
 					{	

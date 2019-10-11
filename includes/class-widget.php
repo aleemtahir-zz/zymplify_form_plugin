@@ -76,7 +76,7 @@ class ZWF_Widget extends WP_Widget {
         if (isset($_POST['fields'])){
 
 			$post = json_encode($_POST['fields']);
-			// print_r($post); die;
+			// print_r($post); //die;
 
 			$url 		= "https://mpf48x2mxa.execute-api.eu-west-1.amazonaws.com/dev/api/contacts";
 			$response 	= wp_remote_post( $url,
@@ -115,7 +115,7 @@ class ZWF_Widget extends WP_Widget {
 		$select   = isset( $instance['select'] ) ? $instance['select'] : '';
 
 		global $wpdb;
-		$sql = "SELECT f.reference_id as field_id, f.name as field_name, f.label as field_label, f.type as field_type, GROUP_CONCAT(v.value ORDER BY v.order_id ASC) AS field_value
+		$sql = "SELECT f.reference_id as field_id, f.name as field_name, f.label as field_label, f.type as field_type, f.required as field_required,GROUP_CONCAT(v.value ORDER BY v.order_id ASC) AS field_value
                 FROM ".$wpdb->prefix."zymplify_campaigns c 
                 INNER JOIN ".$wpdb->prefix."zymplify_campaigns_form_fields f ON c.reference_id = f.campaign_id 
                 LEFT JOIN ".$wpdb->prefix."zymplify_campaigns_form_field_values v ON f.reference_id = v.form_id 
@@ -139,15 +139,16 @@ class ZWF_Widget extends WP_Widget {
 				$content .= $before_title . $title . $after_title;
 			}
 			// Display text field
-			if ( $text ) {
-				$content .= '<p>' . $text . '</p>';
-			}
+			// if ( $text ) {
+			// 	$content .= '<p>' . $text . '</p>';
+			// }
 			// Display select field
 			if ( $results ) {
 				$content .= '<form method="post" action="" class="zwf_form" id="form_'.$campaign_id.'" >';
 				foreach ($results as $key => $value) {
 					$required = '';
-					if(strpos($value->field_label, '*') !== false)
+
+					if($value->field_required == 1)
 						$required = 'required';
 
 					if($value->field_type == 1){
@@ -164,7 +165,7 @@ class ZWF_Widget extends WP_Widget {
 						'<label for="'.$value->field_name.'">'.$value->field_label.'</label>'.
 						'<textarea  class="form-control widefat" 
 							id="'.$value->field_id.'" 
-							name="fields['.$value->field_name.']" type="text" '.$required.'> '.$value->field_value.'</textarea '.
+							name="fields['.$value->field_name.']" type="text" '.$required.'> '.$value->field_value.'</textarea>'.
 						'</div>'.
 					  	'</p>';
 					}
@@ -178,7 +179,7 @@ class ZWF_Widget extends WP_Widget {
 						foreach ($values as $v) {
 							
 							$content .= '<input class="form-control widefat" id="'.$value->field_id.'" name="fields['.$value->field_name.']" type="checkbox" value="'.$v.'" '.$required.' />'.$v;
-							$content .= '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+							// $content .= '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 						}
 					  	$content .= '</div>';
 					  	$content .= '</p>';
@@ -193,7 +194,7 @@ class ZWF_Widget extends WP_Widget {
 						foreach ($values as $v) {
 							
 							$content .= '<input class="form-control widefat" id="'.$value->field_id.'" name="fields['.$value->field_name.']" type="radio" value="'.$v.'" '.$required.' />'.$v;
-							$content .= '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+							// $content .= '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 						}
 						$content .= '</div>';
 					  	$content .= '</p>';
@@ -292,7 +293,7 @@ class ZWF_Widget extends WP_Widget {
 				$content .= '<input type="hidden" name="fields[campaignId]" value="'.$campaign_id.'">';
 				$content .= '<input type="hidden" name="fields[channel]" value="155471">';
 				$content .= '<input type="hidden" name="fields[client]" value="12">';
-				$content .= '<button class="zwf_submit" data-campaign-id="'.$campaign_id.'" type="submit" class="btn btn-primary" name="send">Submit</button>';
+				$content .= '<button class="btn btn-default zwf_submit" data-campaign-id="'.$campaign_id.'" type="submit" class="btn btn-primary" name="send">Submit</button>';
 				$content .= '<br><br><p id="zwf_submit_msg_'.$campaign_id.'"></p><br><br>';
 				$content .= '</form>';
 			}
