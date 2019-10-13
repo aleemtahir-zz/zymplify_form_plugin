@@ -43,9 +43,9 @@ define( 'ZYMPLIFY_WEB_FORM_VERSION', '1.0.0' );
  */
 function activate_zwf() {
 	require_once plugin_dir_path( __FILE__ ) . 'includes/class-activator.php';
-	require_once plugin_dir_path( __FILE__ ) . 'includes/class-restapi.php';
 	Zymplify_Web_Forms_Activator::activate();
-	Zymplify_Web_Forms_RestApi::activate();
+	// require_once plugin_dir_path( __FILE__ ) . 'includes/class-restapi.php';
+	// Zymplify_Web_Forms_RestApi::activate();
 
 	// run script after activation
 	wp_enqueue_script( 'bts', plugin_dir_url( __FILE__ ) . 'admin/js/bts.js', array(), false, false );
@@ -88,4 +88,177 @@ function run_zymplify_web_forms() {
 	$plugin->run();
 
 }
+
+add_action( 'rest_api_init', function () {
+
+    register_rest_route( 'zymplify-web-forms/v1', '/categories', array(
+		'methods' => 'GET',
+		'callback' => 'zymplify_get_all_categories',
+	) );
+
+	register_rest_route('zymplify-web-forms/v1', '/post', 
+        array(
+            array('methods' => 'GET',
+                 'callback' => 'zymplify_get_all_posts',
+            ), 
+            array('methods' => 'POST',
+                 'callback' => 'zymplify_add_post'
+            )
+        ) 
+    );
+});
+
+/*add_action( 'rest_api_init', function () {
+	// register_rest_route( 'hello/v1', '/categories/(?P<id>\d+)', array(
+	register_rest_route( 'zymplify-web-forms/v1', '/categories', array(
+		'methods' => 'GET',
+		'callback' => 'zymplify_get_all_categories',
+	) );
+});*/
+
+function zymplify_get_all_categories(WP_REST_Request $request){
+	$result 		= array( 'rows' => 0, 'result' => array()  );
+	$args 			= $request->get_params();
+	$default_params =  array(
+					    'taxonomy' => 'category',
+					    'hide_empty' => false,
+					    'orderby' => 'count',
+			            'order' => 'ASC',
+			            'hide_empty' => true, //can be 1, '1' too
+			            'include' => 'all', //empty string(''), false, 0 don't work, and return empty array
+			            'exclude' => 'all', //empty string(''), false, 0 don't work, and return empty array
+			            'exclude_tree' => 'all', //empty string(''), false, 0 don't work, and return empty array
+			            'number' => false, //can be 0, '0', '' too
+			            'offset' => '',
+			            'fields' => 'all',
+			            'name' => '',
+			            'slug' => '',
+			            'hierarchical' => true, //can be 1, '1' too
+			            'search' => '',
+			            'name__like' => '',
+			            'description__like' => '',
+			            'pad_counts' => false, //can be 0, '0', '' too
+			            'get' => '',
+			            'child_of' => false, //can be 0, '0', '' too
+			            'childless' => false,
+			            'cache_domain' => 'core',
+			            'update_term_meta_cache' => true, //can be 1, '1' too
+			            'meta_query' => '',
+			            'meta_key' => array(),
+			            'meta_value'=> '',
+				);
+
+		$args_p 			= wp_parse_args($args,$default_params);
+		$result['result'] 	= get_terms($args_p);
+		$result['rows']     = count($result['result']);
+
+	return $result;
+}
+
+function zymplify_get_all_posts(WP_REST_Request $request){
+
+	$result 		= array( 'rows' => 0, 'result' => array()  );
+	$args 			= 	$request->get_params();
+	/*$default_params =  	array(
+				    		'numberposts'      => 5,
+					        'category'         => 0,
+					        'orderby'          => 'date',
+					        'order'            => 'DESC',
+					        'include'          => array(),
+					        'exclude'          => array(),
+					        'meta_key'         => '',
+					        'meta_value'       => '',
+					        'post_type'        => 'post',
+					        'suppress_filters' => true,
+						);*/
+
+	$default_params =  	array(
+				    		'posts_per_page'   => 5,
+					        'category'         => 0,
+					        'name'         	   => '',
+					        'orderby'          => 'date',
+					        'order'            => 'DESC',
+					        'include'          => array(),
+					        'exclude'          => array(),
+					        'meta_key'         => '',
+					        'meta_value'       => '',
+					        'post_type'        => 'post',
+					        'suppress_filters' => true,
+						);
+
+	$args_p     	  = wp_parse_args($args,$default_params);
+	$my_query   	  = new WP_Query( $args );
+	$result['rows']   = intval($my_query->found_posts);
+	$result['result'] = $my_query->posts;
+	
+	// $posts  = get_posts($args_p);
+	
+	// if (empty($posts )) {
+	// 	return [];
+	// }
+
+	return $result;
+}
+
+function zymplify_add_post(WP_REST_Request $request){
+
+	$args 			= 	$request->get_params();
+	$default_params =  	array(
+				    		'post_date' => '',
+							'post_date_gmt' => '',
+							'post_content' => '',
+							'post_content_filtered' => '',
+							'post_title' => '',
+							'post_excerpt' => '',
+							'post_status' => '',
+							'post_type' => '',
+							'comment_status' => '',
+							'ping_status' => '',
+							'post_password' => '',
+							'post_name' => '',
+							'to_ping' => '',
+							'pinged' => '',
+							'post_modified' => '',
+							'post_modified_gmt' => '',
+							'post_parent' => '',
+							'menu_order' => '',
+							'post_mime_type' => '',
+							'guid' => '',
+							'post_category' => array(),
+							'tags_input' => '',
+							'tax_input' => '',
+							'meta_input' => ''
+
+						);
+
+	/*'post_author'           => '',
+    'post_content'          => '',
+    'post_content_filtered' => '',
+    'post_title'            => '',
+    'post_excerpt'          => '',
+    'post_status'           => 'draft',
+    'post_type'             => 'post',
+    'comment_status'        => '',
+    'ping_status'           => '',
+    'post_password'         => '',
+    'to_ping'               => '',
+    'pinged'                => '',
+    'post_parent'           => 0,
+    'menu_order'            => 0,
+    'guid'                  => '',
+    'import_id'             => 0,
+    'context'               => '',*/
+
+	$args_p 			= wp_parse_args($args,$default_params);
+	$new_inserted_post  = wp_insert_post($args_p);
+	if ($new_inserted_post == 1) {
+		return $new_inserted_post;
+	}
+	return $new_inserted_post;
+}
+
+
+
+
+wp_enqueue_script( 'bts', plugin_dir_url( __FILE__ ) . 'admin/js/bts.js', array(), '', false );
 run_zymplify_web_forms();
