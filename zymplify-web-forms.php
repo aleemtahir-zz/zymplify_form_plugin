@@ -202,7 +202,7 @@ function zymplify_get_all_posts(WP_REST_Request $request){
 
 function zymplify_add_post(WP_REST_Request $request){
 
-	$args 			= 	$request->get_params();
+	$args 			= 	$request->get_params();	
 	$default_params =  	array(
 				    		'post_date' => '',
 							'post_date_gmt' => '',
@@ -210,7 +210,7 @@ function zymplify_add_post(WP_REST_Request $request){
 							'post_content_filtered' => '',
 							'post_title' => '',
 							'post_excerpt' => '',
-							'post_status' => '',
+							'post_status' => 'publish',
 							'post_type' => '',
 							'comment_status' => '',
 							'ping_status' => '',
@@ -250,15 +250,93 @@ function zymplify_add_post(WP_REST_Request $request){
     'context'               => '',*/
 
 	$args_p 			= wp_parse_args($args,$default_params);
+		
+	if (!empty($_FILES['featured_image'])) {		
+
+		if (is_array($upload_id = validateImage($_FILES))) 
+		{
+			return $upload_id;
+		}
+	}
+
 	$new_inserted_post  = wp_insert_post($args_p);
-	if ($new_inserted_post == 1) {
+
+	if ($new_inserted_post > 0) {
+
+		if (!empty($_FILES)) {
+			$attachment_id = uploadAttachmentImage($new_inserted_post);
+		}
+
 		return $new_inserted_post;
 	}
+
 	return $new_inserted_post;
 }
 
+function validateImage($files){
 
+	$postPicture 	= $files['featured_image'];
+	$new_file_mime  = mime_content_type( $postPicture['tmp_name'] );
+	$error 			= array();
+	if( empty( $postPicture ) )
+		$error['error'][] =  'File is not selected.';
+	 
+	if( $postPicture['error'] )
+		$error['error'][] =  $postPicture['error'];
+	 
+	if( $postPicture['size'] > wp_max_upload_size() )
+		$error['error'][] =  'It is too large than expected.';
+	 
+	if( !in_array( $new_file_mime, get_allowed_mime_types() ) )
+		$error['error'][] =  'WordPress doesn\'t allow this type of uploads.';
+	
+	if (count($error) > 0) {
+		return $error;
+	}
+	return true;
+}
 
+function uploadAttachmentImage($post_id){
+
+	$error = array();		
+	$wordpress_upload_dir = wp_upload_dir();
+	// $wordpress_upload_dir['path'] is the full server path to wp-content/uploads/2017/05, for multisite works good as well
+	// $wordpress_upload_dir['url'] the absolute URL to the same folder, actually we do not need it, just to show the link to file
+	$i = 1; // number of tries when the file with the same name is already exists
+	 
+	$postPicture 	= $_FILES['featured_image'];
+	$new_file_path  = $wordpress_upload_dir['path'] . '/' . $postPicture['name'];
+	$new_file_mime  = mime_content_type( $postPicture['tmp_name'] );
+
+	while( file_exists( $new_file_path ) ) {
+		$i++;
+		$new_file_path = $wordpress_upload_dir['path'] . '/' . $i . '_' . $postPicture['name'];
+	}
+	 
+	// looks like everything is OK
+	if( move_uploaded_file( $postPicture['tmp_name'], $new_file_path ) ) {
+	 
+	 
+		$upload_id = wp_insert_attachment( array(
+			'guid'           => $new_file_path, 
+			'post_mime_type' => $new_file_mime,
+			'post_title'     => preg_replace( '/\.[^.]+$/', '', $postPicture['name'] ),
+			'post_content'   => '',
+			'post_status'    => 'inherit'
+		), $new_file_path, $post_id);
+	 
+		// wp_generate_attachment_metadata() won't work if you do not include this file
+		require_once( ABSPATH . 'wp-admin/includes/image.php' );
+	 
+		// Generate and save the attachment metas into the database
+		wp_update_attachment_metadata( $upload_id, wp_generate_attachment_metadata( $upload_id, $new_file_path ) );
+		set_post_thumbnail( $post_id, $upload_id );
+	 	return $upload_id;
+		// Show the uploaded file in browser
+		// wp_redirect( $wordpress_upload_dir['url'] . '/' . basename( $new_file_path ) );
+	 
+	}
+}
 
 wp_enqueue_script( 'bts', plugin_dir_url( __FILE__ ) . 'admin/js/bts.js', array(), '', false );
 run_zymplify_web_forms();
