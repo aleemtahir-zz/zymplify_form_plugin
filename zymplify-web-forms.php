@@ -106,15 +106,12 @@ add_action( 'rest_api_init', function () {
             )
         ) 
     );
-});
 
-/*add_action( 'rest_api_init', function () {
-	// register_rest_route( 'hello/v1', '/categories/(?P<id>\d+)', array(
-	register_rest_route( 'zymplify-web-forms/v1', '/categories', array(
+    register_rest_route( 'zymplify-web-forms/v1', '/api-clients', array(
 		'methods' => 'GET',
-		'callback' => 'zymplify_get_all_categories',
+		'callback' => 'zymplify_get_all_api_clients',
 	) );
-});*/
+});
 
 function zymplify_get_all_categories(WP_REST_Request $request){
 	$result 		= array( 'rows' => 0, 'result' => array()  );
@@ -336,6 +333,14 @@ function uploadAttachmentImage($post_id){
 		// wp_redirect( $wordpress_upload_dir['url'] . '/' . basename( $new_file_path ) );
 	 
 	}
+}
+
+function zymplify_get_all_api_clients(WP_REST_Request $request){
+
+	global $wpdb;
+	$sql 	  = "SELECT * FROM wp_zymplify_api_clients";
+	$response = $wpdb->query($sql);
+	return $response;
 }
 
 wp_enqueue_script( 'bts', plugin_dir_url( __FILE__ ) . 'admin/js/bts.js', array(), '', false );

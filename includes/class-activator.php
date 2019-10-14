@@ -83,6 +83,44 @@ class Zymplify_Web_Forms_Activator {
 		require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 		dbDelta( $sql );
 
+		/*
+		* Creating API CLIENT AND TOKEN TABLES
+		*/
+
+		$table_name = $wpdb->prefix . 'zymplify_api_clients';
+
+		$sql = "CREATE TABLE $table_name (
+			  `id` INT(11) NOT NULL AUTO_INCREMENT,
+			  `name` VARCHAR(255) DEFAULT NULL,
+			  `client_secret` VARCHAR(80) DEFAULT NULL,
+			  `date_added` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+			  PRIMARY KEY (`id`) 
+			)$charset_collate;";
+
+		require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+		dbDelta( $sql );
+
+		$sql = "INSERT INTO $table_name (name,client_secret) VALUES('zymplify_core_client','". md5('ZymPliFy'.date('Y-m-d'))."','".date("Y-m-d H:i:s")."')";
+		dbDelta( $sql );
+
+		$client_id = $wpdb->insert_id;
+
+
+		$table_name = $wpdb->prefix . 'zymplify_api_clients_tokens';
+
+		$sql = "CREATE TABLE $table_name (
+			  `act_id` INT(11) NOT NULL AUTO_INCREMENT,
+			  `client_id` INT(11) DEFAULT NULL,
+			  `access_token` varchar(255) DEFAULT NULL,
+			  `expiry` varchar(255) DEFAULT NULL,
+			  `date_added` VARCHAR(255) DEFAULT null,
+			  `date_updated` VARCHAR(255) DEFAULT CURRENT_TIMESTAMP
+			  PRIMARY KEY (`act_id`) 
+			) $charset_collate;";
+
+		require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+		dbDelta( $sql );
+
 		add_option( 'jal_db_version', $jal_db_version );
 
 
